@@ -6,10 +6,9 @@ import org.hibernate.validator.HibernateValidator;
 import org.hibernate.validator.HibernateValidatorConfiguration;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.annotation.MapperScan;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.FilterType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.*;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.validation.beanvalidation.MethodValidationPostProcessor;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
@@ -29,10 +28,13 @@ import java.util.HashMap;
 )
 @MapperScan("cc.prayol.springdemo.generate.mapper")
 public class RootConfig {
+    private final static Logger logger=LoggerFactory.getLogger(RootConfig.class);
     /**
      * 设置数据源
      * @return
      */
+    @Bean
+    @Profile("dev")
     public HikariDataSource hikariDataSource(){
         HikariDataSource hikariDataSource = new HikariDataSource();
         hikariDataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
@@ -63,5 +65,12 @@ public class RootConfig {
         MethodValidationPostProcessor processor = new MethodValidationPostProcessor();
         processor.setValidator(this.localValidatorFactoryBean());
         return processor;
+    }
+
+    @Bean
+    @Profile("test")
+    public HikariDataSource abb(){
+        logger.info("test");
+        return null;
     }
 }
